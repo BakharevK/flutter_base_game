@@ -1,7 +1,11 @@
 import 'package:bot_example_app/game.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class Event {
+abstract class BaseEvent {}
+
+class StartGameEvent extends BaseEvent {}
+
+class Event extends BaseEvent {
   final int count;
 
   Event(int count) : count = count;
@@ -14,7 +18,7 @@ class GameUiState {
   final bool firstPlayer;
 }
 
-class GameBloc extends Bloc<Event, GameUiState> {
+class GameBloc extends Bloc<BaseEvent, GameUiState> {
   final Game _game;
 
   GameBloc(Game game)
@@ -22,18 +26,17 @@ class GameBloc extends Bloc<Event, GameUiState> {
         super(convert(game.getCurrentInfo()));
 
   @override
-  Stream<GameUiState> mapEventToState(Event event) async* {
-    while (!_game.gameOver()) {
-      print("!! ${_game.getCurrentInfo().counter}");
-      // _game.makeTurn();
-      // yield convert(_game.getCurrentInfo());
-      GameUiState currentState = await Future.delayed(
-          Duration(seconds: 1), () {
-            // print("!");
-            _game.makeTurn();
-            return convert(_game.getCurrentInfo());
-          });
-      // print(currentState);
+  Stream<GameUiState> mapEventToState(BaseEvent event) async* {
+    if (event is Event && _game.isHumanTurn()) {
+      _game.makeHumanTurn(event.count);
+      yield convert(_game.getCurrentInfo());
+    }
+
+    while (!_game.gameOver() && !_game.isHumanTurn()) {
+      GameUiState currentState = await Future.delayed(Duration(seconds: 1), () {
+        _game.makeBotTurn();
+        return convert(_game.getCurrentInfo());
+      });
       yield currentState;
     }
   }

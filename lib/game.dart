@@ -1,20 +1,17 @@
 import 'dart:math';
 
-abstract class Player {
+abstract class Player {}
+
+abstract class BotPlayer extends Player {
   int makeTurn(GameInfo state);
 }
 
-class GreedyPlayer extends Player {
+class HumanPlayer extends Player {}
+
+class GreedyPlayer extends BotPlayer {
   @override
   int makeTurn(GameInfo state) {
     return min(state.counter, 6);
-  }
-}
-
-class HumanPlayer extends Player {
-  @override
-  int makeTurn(GameInfo state) {
-    throw UnimplementedError();
   }
 }
 
@@ -29,22 +26,24 @@ class GameInfo {
 class Game {
   final GameInfo info;
 
-  Game(int counter, int playersNumber)
-      : info = GameInfo(
-            counter: counter,
-            playerId: 0,
-            players: List.generate(playersNumber, (index) => GreedyPlayer()));
+  Game(int counter, List<Player> players)
+      : info = GameInfo(counter: counter, playerId: 0, players: players);
 
   bool gameOver() {
     return info.counter <= 0;
   }
 
-  void makeTurn() {
-    Player currentPlayer = info.players[info.playerId];
-    int turn = currentPlayer.makeTurn(info);
-    info.counter -= turn;
-    info.playerId += 1;
-    info.playerId = info.playerId % info.players.length;
+  void makeBotTurn() {
+    if (info.players[info.playerId] is BotPlayer) {
+      BotPlayer currentPlayer = info.players[info.playerId] as BotPlayer;
+      int turn = currentPlayer.makeTurn(info);
+      info.counter -= turn;
+      info.playerId += 1;
+      info.playerId = info.playerId % info.players.length;
+      print(info.counter);
+    } else {
+      throw UnimplementedError("Go f*ck yourself");
+    }
   }
 
   GameInfo getCurrentInfo() {
@@ -52,5 +51,15 @@ class Game {
         counter: info.counter,
         playerId: info.playerId,
         players: List.from(info.players));
+  }
+
+  bool isHumanTurn() {
+    return info.players[info.playerId] is HumanPlayer;
+  }
+
+  void makeHumanTurn(int taken) {
+    info.counter -= taken;
+    info.playerId += 1;
+    info.playerId = info.playerId % info.players.length;
   }
 }

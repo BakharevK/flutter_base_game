@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
       ),
       home: BlocProvider(
         create: (BuildContext context) {
-          return GameBloc(Game(100, 2));
+          return GameBloc(
+              Game(100, [GreedyPlayer(), HumanPlayer(), GreedyPlayer()]));
         },
         child: HomePage(),
       ),
@@ -75,6 +76,11 @@ class HomePage extends StatelessWidget {
           FloatingActionButton(
             onPressed: () => BlocProvider.of<GameBloc>(context).add(Event(6)),
             child: Text("6"),
+          ),
+          FloatingActionButton(
+            onPressed: () =>
+                BlocProvider.of<GameBloc>(context).add(StartGameEvent()),
+            child: Text("Start"),
           ),
         ],
       ),
