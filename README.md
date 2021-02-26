@@ -10,6 +10,6 @@ In this little game I can polish methods of working with bots and UI of flutter 
     * color?
   * base counter value
 * Game End (?) and restart
-* Game loop with bots
+* Game loop with bots (Fix this: need interactive start from user (?))
 * Test for game without BLoC
 * Network features

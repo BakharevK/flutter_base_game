@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'game.dart';
 import 'game_bloc.dart';
 
 void main() {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       ),
       home: BlocProvider(
         create: (BuildContext context) {
-          return GameBloc(GameUiState(counter: 100, firstPlayer: true));
+          return GameBloc(Game(100, 2));
         },
         child: HomePage(),
       ),
