@@ -1,89 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'game.dart';
-import 'game_bloc.dart';
+import 'widgets/game_page.dart';
+import 'widgets/home_page.dart';
+import 'widgets/settings_page.dart';
 
 void main() {
   runApp(MyApp());
 }
 
+/***
+    - start game screen (button "BEGIN")
+    - configure screen (number of bots + number of rocks)
+    - game screen (game + buttons with turn + info about player)
+    - game over screen
+ ***/
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Dist',
+      title: 'Rocks',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BlocProvider(
-        create: (BuildContext context) {
-          return GameBloc(
-              Game(100, [GreedyPlayer(), HumanPlayer(), GreedyPlayer()]));
-        },
-        child: HomePage(),
-      ),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Title"),
-      ),
-      body: BlocBuilder<GameBloc, GameUiState>(
-        builder: (context, state) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'First player: ${state.firstPlayer}\nHeap size:',
-              ),
-              Text(
-                '${state.counter}',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          FloatingActionButton(
-            onPressed: () => BlocProvider.of<GameBloc>(context).add(Event(1)),
-            child: Text("1"),
-          ),
-          FloatingActionButton(
-            onPressed: () => BlocProvider.of<GameBloc>(context).add(Event(2)),
-            child: Text("2"),
-          ),
-          FloatingActionButton(
-            onPressed: () => BlocProvider.of<GameBloc>(context).add(Event(3)),
-            child: Text("3"),
-          ),
-          FloatingActionButton(
-            onPressed: () => BlocProvider.of<GameBloc>(context).add(Event(4)),
-            child: Text("4"),
-          ),
-          FloatingActionButton(
-            onPressed: () => BlocProvider.of<GameBloc>(context).add(Event(5)),
-            child: Text("5"),
-          ),
-          FloatingActionButton(
-            onPressed: () => BlocProvider.of<GameBloc>(context).add(Event(6)),
-            child: Text("6"),
-          ),
-          FloatingActionButton(
-            onPressed: () =>
-                BlocProvider.of<GameBloc>(context).add(StartGameEvent()),
-            child: Text("Start"),
-          ),
-        ],
-      ),
+      onGenerateRoute: (settings) {
+        if (settings.name == HomePage.routeName) {
+          return MaterialPageRoute(
+            builder: (context) => HomePage(),
+          );
+        }
+        if (settings.name == SettingsPage.routeName) {
+          return MaterialPageRoute(
+            builder: (context) => SettingsPage(),
+          );
+        }
+        if (settings.name == GamePage.routeName) {
+          GamePageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) => GamePage(args),
+          );
+        }
+        // if (settings.name == GameOverPage.routeName) {
+        //
+        // }
+        assert(false, 'Need to implement ${settings.name}');
+        return null;
+      },
+      home: HomePage(),
     );
   }
 }

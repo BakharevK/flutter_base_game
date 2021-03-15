@@ -1,24 +1,10 @@
-import 'package:bot_example_app/game.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class BaseEvent {}
+import '../game/game.dart';
+import 'game_events.dart';
+import 'game_state.dart';
 
-class StartGameEvent extends BaseEvent {}
-
-class Event extends BaseEvent {
-  final int count;
-
-  Event(int count) : count = count;
-}
-
-class GameUiState {
-  GameUiState({this.counter, this.firstPlayer});
-
-  final int counter;
-  final bool firstPlayer;
-}
-
-class GameBloc extends Bloc<BaseEvent, GameUiState> {
+class GameBloc extends Bloc<BaseGameEvent, GameUiState> {
   final Game _game;
 
   GameBloc(Game game)
@@ -26,7 +12,7 @@ class GameBloc extends Bloc<BaseEvent, GameUiState> {
         super(convert(game.getCurrentInfo()));
 
   @override
-  Stream<GameUiState> mapEventToState(BaseEvent event) async* {
+  Stream<GameUiState> mapEventToState(BaseGameEvent event) async* {
     if (event is Event && _game.isHumanTurn()) {
       _game.makeHumanTurn(event.count);
       yield convert(_game.getCurrentInfo());
